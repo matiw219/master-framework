@@ -21,8 +21,13 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 abstract public class MasterPlugin extends JavaPlugin {
     private @Getter AnnotationConfigApplicationContext context;
 
+    public void preSpring() {
+
+    }
+
     @Override
     public void onLoad() {
+        preSpring();
         this.context = new AnnotationConfigApplicationContext();
         this.context.setClassLoader(this.getClassLoader());
 
