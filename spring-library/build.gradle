@@ -1,0 +1,54 @@
+group 'me.masterkaiser.framework'
+version '1.0-SNAPSHOT'
+def releasesRepo = false;
+
+repositories {
+    maven {
+        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+        content {
+            includeGroup 'org.bukkit'
+            includeGroup 'org.spigotmc'
+        }
+    }
+}
+
+dependencies {
+    // #spring-context
+    implementation 'org.springframework:spring-context:5.3.10'
+
+    // #spigot
+    compileOnly 'org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT'
+}
+
+shadowJar {
+    archiveFileName = "${project.name}-${project.version}.jar"
+}
+
+def repoReleasesName = "masterRepositoryReleases"
+def repoReleasesUrl = "https://repo.masterkaiser.me/releases"
+def repoSnapshotsName = "masterRepositorySnapshots"
+def repoSnapshotsUrl = "https://repo.masterkaiser.me/snapshots"
+def repoName = (releasesRepo ? repoReleasesName : repoSnapshotsName)
+def repoUrl = (releasesRepo ? repoReleasesUrl : repoSnapshotsUrl)
+
+// #PUBLSHING
+publishing {
+    repositories {
+        maven {
+            name = "${repoName}"
+            url = "${repoUrl}"
+            credentials(PasswordCredentials)
+            authentication {
+                basic(BasicAuthentication)
+            }
+        }
+    }
+    publications {
+        maven(MavenPublication) {
+            groupId = "${group}"
+            artifactId = "${project.name}"
+            version = "${version}"
+            from components.java
+        }
+    }
+}

@@ -1,0 +1,53 @@
+group 'me.masterkaiser.framework'
+version '1.0-SNAPSHOT'
+def releasesRepo = false;
+
+repositories {
+    maven { url "https://storehouse.okaeri.eu/repository/maven-public" }
+}
+
+dependencies {
+    // #spring-context
+    compileOnly 'org.springframework:spring-context:5.3.10'
+
+    // #okaeriConfig
+    compileOnly "eu.okaeri:okaeri-configs-yaml-bukkit:5.0.0-beta.5"
+    compileOnly 'eu.okaeri:okaeri-configs-json-gson:5.0.0-beta.5'
+    compileOnly 'eu.okaeri:okaeri-configs-json-simple:5.0.0-beta.5'
+
+    // #redisson
+    compileOnly 'org.redisson:redisson:3.20.0'
+
+    // #core
+    compileOnly project(':core')
+}
+
+def repoReleasesName = "masterRepositoryReleases"
+def repoReleasesUrl = "https://repo.masterkaiser.me/releases"
+def repoSnapshotsName = "masterRepositorySnapshots"
+def repoSnapshotsUrl = "https://repo.masterkaiser.me/snapshots"
+def repoName = (releasesRepo ? repoReleasesName : repoSnapshotsName)
+def repoUrl = (releasesRepo ? repoReleasesUrl : repoSnapshotsUrl)
+
+// #PUBLSHING
+publishing {
+    repositories {
+        maven {
+            name = "${repoName}"
+            url = "${repoUrl}"
+            credentials(PasswordCredentials)
+            authentication {
+                basic(BasicAuthentication)
+            }
+        }
+    }
+    publications {
+        maven(MavenPublication) {
+            groupId = "${group}"
+            artifactId = "${project.name}"
+            version = "${version}"
+            from components.java
+        }
+    }
+}
+

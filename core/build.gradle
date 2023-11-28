@@ -1,0 +1,73 @@
+group 'me.masterkaiser.framework'
+version '1.0-SNAPSHOT'
+def releasesRepo = false;
+
+repositories {
+    maven { url "https://storehouse.okaeri.eu/repository/maven-public" }
+    maven {
+        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+        content {
+            includeGroup 'org.bukkit'
+            includeGroup 'org.spigotmc'
+        }
+    }
+    maven {
+        name "masterRepositoryReleases"
+        url "https://repo.masterkaiser.me/snapshots"
+    }
+}
+
+dependencies {
+    // #spring-context
+    compileOnly 'org.springframework:spring-context:5.3.10'
+
+    // #master-commands
+    compileOnly 'me.masterkaiser.command:core:1.0-SNAPSHOT'
+    compileOnly 'me.masterkaiser.command:bukkit:1.0-SNAPSHOT'
+    compileOnly 'me.masterkaiser.command:serdes:1.0-SNAPSHOT'
+
+    // #okaeriConfig
+    compileOnly "eu.okaeri:okaeri-configs-yaml-bukkit:5.0.0-beta.5"
+    compileOnly 'eu.okaeri:okaeri-configs-json-gson:5.0.0-beta.5'
+    compileOnly 'eu.okaeri:okaeri-configs-json-simple:5.0.0-beta.5'
+
+    // #okaeriPersistence
+    compileOnly 'eu.okaeri:okaeri-persistence-core:2.0.0-beta.1'
+    compileOnly 'eu.okaeri:okaeri-persistence-flat:2.0.0-beta.1'
+    compileOnly 'eu.okaeri:okaeri-persistence-jdbc:2.0.0-beta.1'
+
+    // #spigot
+    compileOnly 'org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT'
+
+    // #IridiumColorAPI
+    implementation 'com.iridium:IridiumColorAPI:1.0.6'
+}
+
+def repoReleasesName = "masterRepositoryReleases"
+def repoReleasesUrl = "https://repo.masterkaiser.me/releases"
+def repoSnapshotsName = "masterRepositorySnapshots"
+def repoSnapshotsUrl = "https://repo.masterkaiser.me/snapshots"
+def repoName = (releasesRepo ? repoReleasesName : repoSnapshotsName)
+def repoUrl = (releasesRepo ? repoReleasesUrl : repoSnapshotsUrl)
+
+// #PUBLSHING
+publishing {
+    repositories {
+        maven {
+            name = "${repoName}"
+            url = "${repoUrl}"
+            credentials(PasswordCredentials)
+            authentication {
+                basic(BasicAuthentication)
+            }
+        }
+    }
+    publications {
+        maven(MavenPublication) {
+            groupId = "${group}"
+            artifactId = "${project.name}"
+            version = "${version}"
+            from components.java
+        }
+    }
+}

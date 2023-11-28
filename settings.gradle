@@ -1,0 +1,5 @@
+rootProject.name = 'master-framework'
+include 'core'
+include 'redis'
+include 'spring-library'
+
