@@ -30,6 +30,7 @@ public class Gui<Type> implements InventoryHolder, Listener {
     private @Getter GuiFiller<ItemStack> fillerByItemStack;
     private @Getter GuiFiller<ItemBuilder> fillerByItemBuilder;
     private @Getter GuiEvents guiEvents;
+    private @Getter GuiEvents otherGuiEvents;
     private @Getter @Setter boolean cancelClick = true;
     private @Getter @Setter boolean dispose = true;
     private @Getter @Setter CancelType cancelType = CancelType.TOP;
@@ -46,6 +47,7 @@ public class Gui<Type> implements InventoryHolder, Listener {
         this.fillerByItemStack = new GuiFillerItemStack(this);
         this.fillerByItemBuilder = new GuiFillerItemBuilder(this);
         this.guiEvents = new GuiEvents();
+        this.otherGuiEvents = new GuiEvents();
         this.result = result;
 
         build(type, addItems);
@@ -152,9 +154,15 @@ public class Gui<Type> implements InventoryHolder, Listener {
         Optional.ofNullable(getGuiEvents().getOnClick()).ifPresent(inventoryClickEventGuiHandleType ->
                 inventoryClickEventGuiHandleType.handle(event));
 
+        Optional.ofNullable(getOtherGuiEvents().getOnClick()).ifPresent(inventoryClickEventGuiHandleType ->
+                inventoryClickEventGuiHandleType.handle(event));
+
         final int slot = event.getRawSlot();
 
         Optional.ofNullable(getGuiEvents().getClicks().get(slot)).ifPresent(inventoryClickEventGuiHandleType ->
+                inventoryClickEventGuiHandleType.handle(event));
+
+        Optional.ofNullable(getOtherGuiEvents().getClicks().get(slot)).ifPresent(inventoryClickEventGuiHandleType ->
                 inventoryClickEventGuiHandleType.handle(event));
     }
 
@@ -171,6 +179,8 @@ public class Gui<Type> implements InventoryHolder, Listener {
         }
         Optional.ofNullable(getGuiEvents().getOnOpen()).ifPresent(inventoryOpenEventGuiHandleType ->
                 inventoryOpenEventGuiHandleType.handle(event));
+        Optional.ofNullable(getOtherGuiEvents().getOnOpen()).ifPresent(inventoryOpenEventGuiHandleType ->
+                inventoryOpenEventGuiHandleType.handle(event));
     }
 
     @EventHandler
@@ -183,6 +193,10 @@ public class Gui<Type> implements InventoryHolder, Listener {
         }
         Optional.ofNullable(getGuiEvents().getOnClose()).ifPresent(inventoryCloseEventGuiHandleType -> 
                 inventoryCloseEventGuiHandleType.handle(event));
+
+        Optional.ofNullable(getOtherGuiEvents().getOnClose()).ifPresent(inventoryCloseEventGuiHandleType ->
+                inventoryCloseEventGuiHandleType.handle(event));
+
         if (event.getViewers().size() == 1 && isDispose()) {
             dispose();
         }
@@ -207,6 +221,8 @@ public class Gui<Type> implements InventoryHolder, Listener {
         }
         Optional.ofNullable(getGuiEvents().getOnDrag()).ifPresent(inventoryDragEventGuiHandleType -> 
                 inventoryDragEventGuiHandleType.handle(event));
+        Optional.ofNullable(getOtherGuiEvents().getOnDrag()).ifPresent(inventoryDragEventGuiHandleType ->
+                inventoryDragEventGuiHandleType.handle(event));
     }
 
     public void dispose() {
@@ -220,6 +236,7 @@ public class Gui<Type> implements InventoryHolder, Listener {
         this.fillerByItemStack = null;
         this.fillerByItemBuilder = null;
         this.guiEvents = null;
+        this.otherGuiEvents = null;
     }
 
 
